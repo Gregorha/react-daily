@@ -7,6 +7,7 @@ import ReactHtmlParser from 'react-html-parser';
 import Link from 'next/link';
 import { useContext } from 'react';
 import { ThemeContext } from '../../styles/ThemeProvider';
+import { useRouter } from 'next/dist/client/router';
 
 const EpisodePage: NextPage<{
   episode: DetailedEpisode;
@@ -14,6 +15,10 @@ const EpisodePage: NextPage<{
   nextEpisode: DetailedEpisode;
 }> = ({ episode, previousEpisode, nextEpisode }) => {
   const { theme } = useContext(ThemeContext);
+  const router = useRouter();
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
   return (
     <div>
       <style jsx>{`
@@ -63,7 +68,7 @@ const EpisodePage: NextPage<{
 export const getStaticPaths: GetStaticPaths = async () => {
   const episodes = await getAllEpisodes();
   const paths = episodes.map((episode) => `/episodes/${episode.id}`);
-  return { paths, fallback: false };
+  return { paths, fallback: true };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
@@ -79,6 +84,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       previousEpisode,
       nextEpisode,
     },
+    revalidate: 1,
   };
 };
 

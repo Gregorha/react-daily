@@ -15,7 +15,10 @@ const IndexPage: NextPage<{ episodes: Episode[] }> = ({ episodes }) => {
 
 export async function getStaticProps({ params }) {
   const episodes = await getAllEpisodes();
-  return { props: { episodes: episodes , title: "React Daily Chat"} };
+  return {
+    props: { episodes: episodes, title: 'React Daily Chat' },
+    revalidate: 1,
+  };
 }
 
 export default IndexPage;
